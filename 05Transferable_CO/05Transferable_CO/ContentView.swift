@@ -7,13 +7,14 @@
 
 import SwiftUI
 import Algorithms
+import UniformTypeIdentifiers
 
 struct ContentView: View {
     
     // init var
-    @State private var todoTasks: [String] = ["deathot0", "deathot1", "deathot2"]
-    @State private var inprogressTasks: [String] = []
-    @State private var doneTasks: [String] = []
+    @State private var todoTasks: [DeveloperTask] = [MockData.taskOne, MockData.taskTwo, MockData.taskThree]
+    @State private var inprogressTasks: [DeveloperTask] = []
+    @State private var doneTasks: [DeveloperTask] = []
     
     @State private var isinprogressTargeted = false
     @State private var istodoTargeted = false
@@ -28,12 +29,13 @@ struct ContentView: View {
             KanbanView(title: "To Do", tasks: todoTasks, isTargeted: istodoTargeted)
             
             // drop function
-            .dropDestination(for: String.self) { droppedTasks, location in
+                .dropDestination(for: DeveloperTask.self) { droppedTasks, location in
                 
                 // delete original task
                 for task in droppedTasks {
-                    inprogressTasks.removeAll { $0 == task}
-                    doneTasks.removeAll { $0 == task}
+                    todoTasks.removeAll { $0.id == task.id }
+                    inprogressTasks.removeAll { $0.id == task.id }
+                    doneTasks.removeAll { $0.id == task.id }
                 }
                 
                 // avoid duplicates
@@ -47,12 +49,13 @@ struct ContentView: View {
             KanbanView(title: "In Process", tasks: inprogressTasks, isTargeted: isinprogressTargeted)
             
                 // drop function
-                .dropDestination(for: String.self) { droppedTasks, location in
+                .dropDestination(for: DeveloperTask.self) { droppedTasks, location in
                     
                     // delete original task
                     for task in droppedTasks {
-                        todoTasks.removeAll { $0 == task}
-                        doneTasks.removeAll { $0 == task}
+                        todoTasks.removeAll { $0.id == task.id }
+                        inprogressTasks.removeAll { $0.id == task.id }
+                        doneTasks.removeAll { $0.id == task.id }
                     }
                     
                     // avoid duplicates
@@ -65,12 +68,13 @@ struct ContentView: View {
             KanbanView(title: "Done", tasks: doneTasks, isTargeted: isdoneTargeted)
             
             // drop function
-            .dropDestination(for: String.self) { droppedTasks, location in
+                .dropDestination(for: DeveloperTask.self) { droppedTasks, location in
                 
                 // delete original task
                 for task in droppedTasks {
-                    todoTasks.removeAll { $0 == task}
-                    inprogressTasks.removeAll { $0 == task}
+                    todoTasks.removeAll { $0.id == task.id }
+                    inprogressTasks.removeAll { $0.id == task.id }
+                    doneTasks.removeAll { $0.id == task.id }
                 }
                 
                 // avoid duplicates
@@ -85,22 +89,22 @@ struct ContentView: View {
     }
 }
 
-#Preview {
-    ContentView()
-}
-
-//struct ContentView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ContentView()
-//            .previewInterfaceOrientation(.landscapeRight)
-//    }
+//#Preview {
+//    ContentView()
 //}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+            .previewInterfaceOrientation(.landscapeRight)
+    }
+}
 
 // init kanbanview View
 struct KanbanView: View {
     
     let title: String
-    let tasks: [String]
+    let tasks: [DeveloperTask]
     let isTargeted: Bool
     
     var body: some View {
@@ -116,11 +120,12 @@ struct KanbanView: View {
                 // set tasks shape
                 VStack(alignment: .leading, spacing: 12) {
                     ForEach(tasks, id: \.self) { task in
-                        Text(task)
+                        Text(task.title)
                             .padding(12)
                             .background(Color(uiColor: .secondarySystemGroupedBackground))
                             .cornerRadius(8)
                             .shadow(radius: 0.1, x: 0.1, y: 0.1)
+//                            .draggable(task)
                             .draggable(task, preview: {
                                 // Return an empty view as the drag preview to prevent flashing
                                 Color.clear.frame(width: 3, height: 3)
@@ -132,4 +137,36 @@ struct KanbanView: View {
             }
         }
     }
+}
+
+struct DeveloperTask: Codable, Hashable, Transferable {
+    let id: UUID
+    let title: String
+    let owner: String
+    let note: String
+    
+    static var transferRepresentation: some TransferRepresentation {
+        CodableRepresentation(contentType: .developerTask)
+    }
+}
+
+extension UTType {
+    static let developerTask = UTType(exportedAs: "co.deathot.developerTask")
+}
+
+struct MockData {
+    static let taskOne = DeveloperTask(id: UUID(),
+                                       title: "deathot0",
+                                       owner: "deathot",
+                                       note: "Note placeholder")
+    
+    static let taskTwo = DeveloperTask(id: UUID(),
+                                       title: "deathot1",
+                                       owner: "deathot",
+                                       note: "Note placeholder")
+    
+    static let taskThree = DeveloperTask(id: UUID(),
+                                       title: "deathot2",
+                                       owner: "deathot",
+                                       note: "Note placeholder")
 }
