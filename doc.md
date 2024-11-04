@@ -26,3 +26,11 @@
 - **ScaledMetric**: @ScaledMetric(relativeTo: .title) var paddingwidth = 14.5
     1. the value is proportionally larger or smaller
     2. such as .padding(paddingWidth)
+- **.overlay**: .overlay(alignment: .bottom) {
+                Caption(text: captionText)
+            }
+    1. .overlay(): delcares that the caption bleongs in front of the image
+    2. .bottom:  overlay(...) contents to the bottom center of the primary view
+- **.clipShape()**: .clipShape(RoundedRectangle(cornerRadius: 10.0, style: .continuous))
+    1. rounds the corners of the image
+- **background(_:in:fillStyle:)**: a background modifier puts its contents behind the view it modifies, rather than in front
