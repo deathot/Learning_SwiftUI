@@ -7,28 +7,28 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct MeView: View {
     var body: some View {
         VStack {
             MapView()
-                .frame(height: 400)
+                .frame(height: 300)
             
             CircleImage()
                 .offset(y: -290)
                 .padding(.bottom, -390)
             
             VStack(alignment: .leading) {
-                Text("Hello, World!")
+                Text("Hi, Welcome!")
                     .font(.title)
                     .fontWeight(.black)
                     .foregroundColor(Color.gray)
                 Divider()
                 
                 HStack {
-                    Text("Sweet")
+                    Text("BigGarlic")
                         .font(.title)
                     //                Spacer()
-                    Text("Honey.")
+                    Text("")
                         .font(.title)
                 }
                 .font(.subheadline)
@@ -36,7 +36,7 @@ struct ContentView: View {
                 Divider()
                 
                 HStack {
-                    Text("Gat, BigGarlic")
+                    Text("你好")
                         .font(.title2)
                     Text(":)")
                         .font(.title)
@@ -54,5 +54,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    MeView()
 }
